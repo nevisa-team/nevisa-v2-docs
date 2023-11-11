@@ -4,7 +4,7 @@
 ## 1. api-server
 
 - این سرویس به درخواست‌های تمامی کاربران به صورت همزمان پاسخ می‌دهد
-- مستندات Swagger نحوه استفاده از API نیز موجود است. https://\<ServerAddress\>/api/docs
+- مستندات `Swagger` نحوه استفاده از `API` نیز موجود است. `https://<ServerAddress>/api/docs`
 - مدیریت کاربران و اتصال آنها از طریق Websocket (Socket.io) به عهده این سرویس است
 
 ## 2. asr-server
@@ -14,9 +14,9 @@
 
 # سرویس PM2
 
-تمامی سرویس‌های بالا با استفاده از PM2 مدیریت می‌شود. مستندات کامل استفاده از PM2 در این [لینک](https://pm2.keymetrics.io/docs/usage/quick-start/) موجود است.
+تمامی سرویس‌های بالا با استفاده از `PM2` مدیریت می‌شود. مستندات کامل استفاده از `PM2` در این [لینک](https://pm2.keymetrics.io/docs/usage/quick-start/) موجود است.
 
-تمامی دستورات PM2 حتماً باید با sudo اجرا شود.
+تمامی دستورات `PM2` حتماً باید با `sudo` اجرا شود.
 <div style="margin-left: auto; margin-right: auto; width: 70%">
   
 | id | name | mode | ↻ | status | cpu | memory |
