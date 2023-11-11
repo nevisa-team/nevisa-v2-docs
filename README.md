@@ -58,7 +58,7 @@ sudo pm2 save
 
 ## نحوه اتصال به socket در Javascript:
 
-با استفاده از دستور زیر پکیج socket.io رانصب کنید
+با استفاده از دستور زیر پکیج `socket.io` رانصب کنید
 
 ```console
 npm install socket.io-client
@@ -69,7 +69,7 @@ import { io } from "socket.io-client";
 const socket = io("SERVER_IP_ADDRESS_OR_URL", { extraHeaders: { token: token, platform: "mobile-app" || "browser" }})
 ```
 
-توکن: از سرویس Swagger استفاده کنید و در قسمت **Authentication** درخواست Login را ارسال کنید. در جواب درخواست، توکن برای شما ارسال خواهد شد.
+توکن: از سرویس `Swagger` استفاده کنید و در قسمت `Authentication` درخواست `Login` را ارسال کنید. در جواب درخواست، توکن برای شما ارسال خواهد شد.
 
 ## نحوه ارسال و دریافت پیام به سوکت:
 ```js
