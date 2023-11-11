@@ -29,18 +29,30 @@
 
 
 
-1. `sudo pm2 ls`
 - پس اجرای این دستور لیست تمامی سرویس‌ها به همراه جزئیات نمایش داده می‌شود
-2. `sudo pm2 start \<Service Name\>`
+```console
+sudo pm2 ls
+```
 - پس از اجرای دستور سرویس مورد نظر / همه سرویس‌ها راه اندازی خواهد شد
-3. `sudo pm2 stop \<Service Name\>`
+```console
+sudo pm2 start <Service Name>
+```
 - پس از اجرای دستور سرویس مورد نظر متوقف خواهد شد
-4. `sudo pm2 restart \<Service Name\>`
+```console
+sudo pm2 stop <Service Name>
+```
 - پس از اجرای دستور سرویس مورد نظر راه اندازی خواهد شد
-5. `sudo pm2 delete \<Service Name\>`
-- پس از اجرای دستور سرویس مورد نظر راه اندازی خواهد شد
-6. `sudo pm2 save`
+```console
+sudo pm2 restart <Service Name>
+```
+-  پس از اجرای دستور سرویس مورد نظر راه اندازی خواهد شد
+```console
+sudo pm2 delete <Service Name>
+```
 - پس از اجرای دستور وضعیت فعلی سرویس‌ها ذخیره خواهد شد. پس از راه اندازی مجدد سیستم عامل، سرویس‌ها با آخرین وضعیت ذخیره شده اجرا می‌شوند
+```console
+sudo pm2 save
+```
 
 # اتصال با Socket.io
 
@@ -48,9 +60,11 @@
 
 با استفاده از دستور زیر پکیج socket.io رانصب کنید
 
-`npm install socket.io-client`
-
+```console
+npm install socket.io-client
 ```
+
+```js
 import { io } from "socket.io-client";
 const socket = io("SERVER_IP_ADDRESS_OR_URL", { extraHeaders: { token: token, platform: "mobile-app" || "browser" }})
 ```
@@ -58,7 +72,12 @@ const socket = io("SERVER_IP_ADDRESS_OR_URL", { extraHeaders: { token: token, pl
 توکن: از سرویس Swagger استفاده کنید و در قسمت **Authentication** درخواست Login را ارسال کنید. در جواب درخواست، توکن برای شما ارسال خواهد شد.
 
 ## نحوه ارسال و دریافت پیام به سوکت:
-
+```js
+socket.emit("Your Event Name", data)
+socket.on("Your Event Listener Name", (response) => {
+console.log(response); //socket response
+})
+```
 
 
 ## لیست رویدادهای سوکت (Events):
@@ -106,6 +125,6 @@ const socket = io("SERVER_IP_ADDRESS_OR_URL", { extraHeaders: { token: token, pl
 - درصورت بروز خطا، اطلاعات خطا در یک event listener به نام message برای شما ارسال خواهد شد
 - درصورت عدم بروز خطا، پردازش فایل آغاز خواهد شد و آخرین وضعیت فایل مورد نظر در یک event listener به نام queue-report برای شما ارسال خواهد شد
 
-1. stop-file-process
+10. stop-file-process
 - با ارسال شناسه فایل در حال پردازش، عملیات پردازش فایل مورد نظر متوقف خواهد شد
 - شناسه فایل حتماً باید به صورت JSON ارسال شود مثال: {id: "file id"}
