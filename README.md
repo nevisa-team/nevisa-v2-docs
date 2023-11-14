@@ -17,6 +17,12 @@
 تمامی سرویس‌های بالا با استفاده از `PM2` مدیریت می‌شود. مستندات کامل استفاده از `PM2` در این [لینک](https://pm2.keymetrics.io/docs/usage/quick-start/) موجود است.
 
 تمامی دستورات `PM2` حتماً باید با `sudo` اجرا شود.
+
+
+- پس اجرای این دستور لیست تمامی سرویس‌ها به همراه جزئیات نمایش داده می‌شود
+```console
+sudo pm2 ls
+```
 <div style="margin-left: auto; margin-right: auto; width: 70%">
   
 | id | name | mode | ↻ | status | cpu | memory |
@@ -27,12 +33,6 @@
 
 </div>
 
-
-
-- پس اجرای این دستور لیست تمامی سرویس‌ها به همراه جزئیات نمایش داده می‌شود
-```console
-sudo pm2 ls
-```
 - پس از اجرای دستور سرویس مورد نظر / همه سرویس‌ها راه اندازی خواهد شد
 ```console
 sudo pm2 start <Service Name>
