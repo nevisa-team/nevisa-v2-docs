@@ -1,4 +1,4 @@
-﻿using NAudio.Wave;
+using NAudio.Wave;
 using Newtonsoft.Json.Linq;
 using SocketIOClient;
 
@@ -71,7 +71,7 @@ static class Program
             {
                 Console.WriteLine("Lock Checked. Ok.");
                 //waveSource.DeviceNumber = 0;
-                waveSource.WaveFormat = new WaveFormat(16000, 1);
+                waveSource.WaveFormat = new WaveFormat(8000, 1);
 
                 waveSource.DataAvailable += new EventHandler<WaveInEventArgs>(waveSource_DataAvailableAsync);
 
@@ -107,7 +107,8 @@ static class Program
                     case ConsoleKey.R:
                         if (!recording)
                         {
-                            await socketIOClient.EmitAsync("start-microphone");                            
+                            await socketIOClient.EmitAsync("start-microphone");
+                            Console.WriteLine("Is Checking Lock ...");
                         }
                         break;
                     case ConsoleKey.S:
