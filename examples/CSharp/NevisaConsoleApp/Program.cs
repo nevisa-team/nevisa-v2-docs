@@ -7,7 +7,7 @@ static class Program
     private static async Task Main()
     {
         string serverAddress = "https://ent.persianspeech.com";
-        string userName = "super.admin";
+        string userName = "test.user";
         string password = "123";
         string token = "";
         bool finished = false;
