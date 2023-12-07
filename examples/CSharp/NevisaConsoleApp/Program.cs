@@ -1,24 +1,43 @@
-using NAudio.Wave;
 using Newtonsoft.Json.Linq;
 using SocketIOClient;
+using System.Text;
 
 static class Program
 {
+    class LockStatus
+    {
+        public bool lockChecked { get; set; }
+    }
+
+    class Result
+    {
+        public string partial { get; set; }
+        public string text { get; set; }
+    }
+
+    //----------------------------------------------------------------------
+
     private static async Task Main()
     {
         string serverAddress = "https://ent.persianspeech.com";
-        string userName = "test.user";
-        string password = "123";
+        string streamAddress = "your-stream-address";
+        string userName = "your-user-name";
+        string password = "your-password";
         string token = "";
         bool finished = false;
         bool recording = false;
-        WaveInEvent waveSource = new();
+        Console.OutputEncoding = Encoding.Unicode;
 
         string request = $"{{\"username\": \"{userName}\", \"password\": \"{password}\" }}";
 
-        StringContent content = new StringContent(request, System.Text.Encoding.UTF8, "application/json");
+        StringContent content = new StringContent(request, Encoding.UTF8, "application/json");
 
-        var httpClient = new HttpClient();
+        var handler = new HttpClientHandler()
+        {
+            ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
+        };
+
+        var httpClient = new HttpClient(handler);
 
         var response = await httpClient.PostAsync($"{serverAddress}/api/auth/login", content);
 
@@ -33,8 +52,11 @@ static class Program
         else
         {
             Console.WriteLine("Login Error!");
+            Console.ReadKey();
             return;
         }
+
+        //----------------------------------------------------------------------
 
         SocketIOOptions options = new()
         {
@@ -45,7 +67,7 @@ static class Program
         }
         };
 
-        var socketIOClient = new SocketIOClient.SocketIO("https://ent.persianspeech.com/", options);
+        var socketIOClient = new SocketIOClient.SocketIO(serverAddress, options);
 
         socketIOClient.OnConnected += (sender, e) =>
         {
@@ -61,36 +83,40 @@ static class Program
         socketIOClient.On("result", response =>
         {
             // You can print the returned data first to decide what to do next.
-            Console.WriteLine(response);
-        });
-
-        socketIOClient.On("start-microphone", data =>
-        {
-            // You can print the returned data first to decide what to do next.
-            if ((bool)JToken.Parse(JToken.Parse(data.ToString())[0].ToString())["lockChecked"])
+            //Console.WriteLine(response);
+            if (response.GetValue<Result>(0).partial is not null)
             {
-                Console.WriteLine("Lock Checked. Ok.");
-                //waveSource.DeviceNumber = 0;
-                waveSource.WaveFormat = new WaveFormat(8000, 1);
-
-                waveSource.DataAvailable += new EventHandler<WaveInEventArgs>(waveSource_DataAvailableAsync);
-
-                waveSource.StartRecording();
-
-                recording = true;
-
-                Console.WriteLine("Is Recording Now ... \nPress S to Stop and Esc to Exit");
+                Console.WriteLine("partial: " + response.GetValue<Result>(0).partial);
+            }
+            if (response.GetValue<Result>(0).text is not null)
+            {
+                Console.WriteLine("text: " + response.GetValue<Result>(0).text);
             }
         });
 
-
-        async void waveSource_DataAvailableAsync(object sender, WaveInEventArgs e)
+        socketIOClient.OnError += (sender, e) =>
         {
-            if (recording)
+            Console.WriteLine(e);
+        };
+
+        socketIOClient.On("start-streaming", data =>
             {
-                await socketIOClient.EmitAsync("microphone-blob", e.Buffer);
-            }
-        }
+                if (data.GetValue<LockStatus>(0).lockChecked)
+                {
+                    try
+                    {
+                        Console.WriteLine("Lock Checked. Ok.");
+                        recording = true;
+                        Console.WriteLine("Is Recording Now ... \nPress S to Stop and Esc to Exit");
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"Error: {ex.Message}");
+                    }
+                }
+            });
+
+        //----------------------------------------------------------------------
 
         await socketIOClient.ConnectAsync();
 
@@ -107,15 +133,15 @@ static class Program
                     case ConsoleKey.R:
                         if (!recording)
                         {
-                            await socketIOClient.EmitAsync("start-microphone");
+                            await socketIOClient.EmitAsync("start-streaming", streamAddress);
                             Console.WriteLine("Is Checking Lock ...");
                         }
                         break;
                     case ConsoleKey.S:
                         recording = false;
-                        waveSource.StopRecording();
-                        await socketIOClient.EmitAsync("stop-microphone");
+                        await socketIOClient.EmitAsync("stop-streaming");
                         Console.WriteLine("Recording Stoped!");
+                        Console.WriteLine("R: Start Recording, S: Stop Recording, Esc: Exit");
                         break;
                     default:
                         Console.WriteLine("R: Start Recording, S: Stop Recording, Esc: Exit");
