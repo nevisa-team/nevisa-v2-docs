@@ -22,8 +22,7 @@ public class MainSocketIO_NEVISA {
 		Map<String, List<String>> headers = new HashMap<>();
 
 		List<String> strList = new ArrayList<>();
-		strList.add(
-				"eyJhbGciOiJXPN0eFfHQ");
+		strList.add("Your Token");
 		headers.put("token", strList);
 		List<String> strList2 = new ArrayList<>();
 		strList2.add("browser");
