@@ -129,6 +129,8 @@ static class Program
                 {
                     case ConsoleKey.Escape:
                         finished = true;
+                        await socketIOClient.EmitAsync("stop-streaming");
+                        Console.WriteLine("Recording Stoped!");
                         break;
                     case ConsoleKey.R:
                         if (!recording)
