@@ -25,8 +25,8 @@ static class Program
     {
         string serverAddress = "https://ent.persianspeech.com";
         string fileAddress = "C:\\Users\\diatell\\Music\\test.wav";
-        string userName = "soroush.gooran";
-        string password = "SrgSrg4343$";
+        string userName = "super.admin";
+        string password = "123";
         string token = "";
         bool finished = false;
         bool processing = false;
