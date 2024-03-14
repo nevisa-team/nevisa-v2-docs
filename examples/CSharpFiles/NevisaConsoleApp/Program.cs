@@ -1,5 +1,8 @@
 using NevisaConsoleApp;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Serialization;
+using SocketIO.Serializer.NewtonsoftJson;
 using SocketIOClient;
 using System.Text;
 
@@ -22,8 +25,8 @@ static class Program
     {
         string serverAddress = "https://ent.persianspeech.com";
         string fileAddress = "C:\\Users\\diatell\\Music\\test.wav";
-        string userName = "super.admin";
-        string password = "123";
+        string userName = "soroush.gooran";
+        string password = "SrgSrg4343$";
         string token = "";
         bool finished = false;
         bool processing = false;
@@ -39,11 +42,20 @@ static class Program
             ExtraHeaders = new()
         {
             { "token", token },
-            { "platform", "browser" }
+            { "platform", "mobile" }
         }
         };
 
+
         var socketIOClient = new SocketIOClient.SocketIO(serverAddress, options);
+
+        socketIOClient.Serializer = new NewtonsoftJsonSerializer(new JsonSerializerSettings
+        {
+            ContractResolver = new DefaultContractResolver
+            {
+                NamingStrategy = new CamelCaseNamingStrategy()
+            }
+        });
 
         socketIOClient.OnConnected += (sender, e) =>
         {
@@ -55,19 +67,25 @@ static class Program
         {
             Console.WriteLine("Disconnected!");
         };
-
-        socketIOClient.On("result", response =>
+        
+        socketIOClient.On("message", data =>
         {
             // You can print the returned data first to decide what to do next.
-            //Console.WriteLine(response);
-            if (response.GetValue<Result>(0).partial is not null)
-            {
-                Console.WriteLine("partial: " + response.GetValue<Result>(0).partial);
-            }
-            if (response.GetValue<Result>(0).text is not null)
-            {
-                Console.WriteLine("text: " + response.GetValue<Result>(0).text);
-            }
+            Console.WriteLine(data);
+        });
+
+        socketIOClient.On("queue-report", data =>
+        {
+            // You can print the returned data first to decide what to do next.
+            Console.WriteLine(data);
+
+            //var json = JToken.Parse(data.ToString());
+
+            //string status = (string)json["status"];
+
+            //string percent = (string)json["percent"];
+
+            //Console.WriteLine("status: {0}, percent: {1}", status, percent);
         });
 
         socketIOClient.OnError += (sender, e) =>
@@ -98,8 +116,11 @@ static class Program
 
         // Add File for Recognition --------------------------------------
         var addFileTask = nevisaAPI.AddFile(token, fileAddress);
-        string files;
-        files = addFileTask.GetAwaiter().GetResult();
+        var response = addFileTask.GetAwaiter().GetResult();
+        //Console.WriteLine(response);
+        var json = JToken.Parse(response.ToString());
+        var files = json["files"];
+        Console.WriteLine(files);
 
         while (!finished)
         {
@@ -114,13 +135,14 @@ static class Program
                     case ConsoleKey.R:
                         if (!processing)
                         {
-                            await socketIOClient.EmitAsync("start-file-process", $"{{\"files\": \"{files}\"}}");
+                            Console.WriteLine($"{{\"files\": {files}}}");
+                            await socketIOClient.EmitAsync("start-file-process", JToken.Parse($"{{\"files\": {files}}}"));
                             Console.WriteLine("Is Checking Lock ...");
                         }
                         break;
                     case ConsoleKey.S:
                         processing = false;
-                        await socketIOClient.EmitAsync("stop-file-process", $"{{\"files\": \"{files}\"}}");
+                        await socketIOClient.EmitAsync("stop-file-process", JToken.Parse($"{{\"files\": {files}}}"));
                         Console.WriteLine("Processing Stoped!");
                         Console.WriteLine("R: Start Processing, S: Stop Processing, Esc: Exit");
                         break;
