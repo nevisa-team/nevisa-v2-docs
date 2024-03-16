@@ -24,7 +24,7 @@ static class Program
     private static async Task Main()
     {
         string serverAddress = "https://ent.persianspeech.com";
-        string fileAddress = "C:\\Users\\diatell\\Music\\test.wav";
+        string fileAddress = "test.wav";
         string userName = "super.admin";
         string password = "123";
         string token = "";
