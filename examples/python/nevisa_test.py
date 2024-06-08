@@ -2,7 +2,9 @@ from nevisa_file_api import *
 import socketio
 
 #sio = socketio.Client(logger=True, engineio_logger=True) # For Debugging
-sio = socketio.Client()
+http_session = requests.Session()
+http_session.verify = False
+sio = socketio.Client(http_session=http_session)
 
 @sio.event()
 def connect():
