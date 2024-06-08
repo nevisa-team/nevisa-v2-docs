@@ -13,7 +13,7 @@ def login(username, password):
         'password': password
     }
     response = requests.post(SERVER_ADDRESS + LOGIN_API,
-                             json=json_data)
+                             json=json_data, verify=False)
 
     if response.status_code != 200:
         raise Exception("Login Failed!")
@@ -39,7 +39,7 @@ def add_file(token, file_path, usePunctuations=False, useTextToNumber=False, use
             ('files', (file_path, file, ))
         ]
         response = requests.post(SERVER_ADDRESS + ADD_FILE_API,
-                                 data=json_data, files=files, headers=headers)
+                                 data=json_data, files=files, headers=headers, verify=False)
 
     result = 'Success' if response.status_code == 200 else 'Failure'
     print(f"add_file result: {result}", response.json(), sep='\n')
